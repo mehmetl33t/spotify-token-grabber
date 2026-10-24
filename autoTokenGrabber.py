@@ -5,8 +5,8 @@ import os
 def get_spotify_token_from_existing_chrome_profile():
     with sync_playwright() as p:
         #LEETleri kendi kullanıcıı adınıza göre değiştirin
-        user_data_dir = r"C:\Users\mehmet\AppData\Local\Google\Chrome\User Data"
-        profile_name = "mehmet"
+        user_data_dir = r"C:\Users\LEET\AppData\Local\Google\Chrome\User Data"
+        profile_name = "LEET"
 
         context = p.chromium.launch_persistent_context(
             user_data_dir=user_data_dir,

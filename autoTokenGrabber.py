@@ -1,17 +1,22 @@
-from playwright.sync_api import sync_playwright
-import re
 import os
+import re
+from playwright.sync_api import sync_playwright
 
-def get_spotify_token_from_existing_chrome_profile():
+
+def get_spotify_token_from_existing_chrome_profile(user_data_dir=None, profile_name="Default"):
+    """Extract Spotify Bearer token from an existing Chrome session using Playwright."""
+    if user_data_dir is None:
+        username = os.environ.get("USERNAME") or os.environ.get("USER") or "Default"
+        user_data_dir = rf"C:\Users\{username}\AppData\Local\Google\Chrome\User Data"
+
+    print(f"Chrome Profil Dizini: {user_data_dir}")
+    print(f"Profil: {profile_name}")
+
     with sync_playwright() as p:
-        #LEETleri kendi kullanıcıı adınıza göre değiştirin
-        user_data_dir = r"C:\Users\LEET\AppData\Local\Google\Chrome\User Data"
-        profile_name = "LEET"
-
         context = p.chromium.launch_persistent_context(
             user_data_dir=user_data_dir,
             headless=False,
-            args=[f"--profile-directory={profile_name}"]
+            args=[f"--profile-directory={profile_name}"],
         )
 
         page = context.new_page()
@@ -27,18 +32,19 @@ def get_spotify_token_from_existing_chrome_profile():
 
         page.on("request", handle_request)
 
-        print("Spotify sayfası açıldı. Otomatik token arıyoruz...")
-        page.wait_for_timeout(15000) 
+        print("Spotify sayfası açıldı. Otomatik token taranıyor...")
+        page.wait_for_timeout(10000)
         context.close()
 
         if token:
-            print("\nToken alındı!")
+            print("\n[+] Token başarıyla alındı!")
             return token
         else:
-            print("\nToken bulunamadı.")
+            print("\n[-] Token bulunamadı. Lütfen Spotify'da oturum açtığınızdan emin olun.")
             return None
-        
+
+
 if __name__ == "__main__":
     token = get_spotify_token_from_existing_chrome_profile()
     if token:
-        print("TOKEN:", token[:60] + "...")
+        print("\nTOKEN:", token)
